@@ -6,10 +6,7 @@ load, the kiosk automatically falls back to a colored placeholder with an
 emoji, so the app keeps working while photos are still being gathered.
 
 ## `prizes/candy/`
-- `Candy.png` — currently shared by all 5 candy prizes (Gummy Bears,
-  Skittles, Bubble Gum, SweeTarts, Red Vines). Add a separate photo per
-  candy type later by giving each its own file and updating the matching
-  `image` path in `js/prizes.js`.
+- `Candy.png` — the single generic "Candy" prize (not broken out by type).
 
 ## `prizes/cards/`
 - `PerfectOrder.png`

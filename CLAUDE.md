@@ -32,8 +32,9 @@ day.
 Three plain files, no framework, no bundler:
 
 - `js/prizes.js` — the prize catalog (`PRIZES` array: id, name, category,
-  weight, image path, emoji fallback), currently 9 items (5 candy, 3 Pokémon
-  TCG Mega Evolution card packs, 1 custom pack). **This is the file to edit
+  weight, image path, emoji fallback), currently 5 items (1 generic candy
+  prize, 3 Pokémon TCG Mega Evolution card packs, 1 surprise bag). **This is
+  the file to edit
   when tuning odds or adding/removing prizes** — `js/app.js` should not need
   changes for day-to-day catalog updates. This same array also drives the
   idle-screen scrolling background (see below), so adding a prize here adds
