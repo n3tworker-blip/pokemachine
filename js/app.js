@@ -1,7 +1,10 @@
 // PokeMachine kiosk logic: weighted prize selection + reveal animation.
 // Prize data/weights live in prizes.js — this file shouldn't need edits for day-to-day tuning.
 
-const SPIN_DURATION_MS = 1400;
+const POKEBALL_SOUND_SRC = "sounds/pokeball-open.wav";
+// Safety net only: if the sound can't play (missing file, browser blocks it), reveal anyway
+// after this long so the kiosk never gets stuck spinning.
+const SPIN_FALLBACK_MS = 6000;
 const REVEAL_AUTO_RESET_MS = 10000;
 const CONFETTI_COUNT = 40;
 const CONFETTI_COLORS = ["#ffcb05", "#ee1515", "#3b6cff", "#ff5da2", "#f5f5f5"];
@@ -19,6 +22,9 @@ const revealPlaceholder = document.getElementById("reveal-placeholder");
 const revealName = document.getElementById("reveal-name");
 const confettiLayer = document.getElementById("confetti-layer");
 const scrollBg = document.getElementById("scroll-bg");
+
+const pokeballSound = new Audio(POKEBALL_SOUND_SRC);
+pokeballSound.preload = "auto";
 
 let revealAutoResetTimer = null;
 
@@ -127,11 +133,23 @@ function runPrizeSequence() {
   prizeButton.disabled = true;
   pokeball.classList.add("spinning");
 
-  window.setTimeout(() => {
+  let revealed = false;
+  const revealOnce = () => {
+    if (revealed) return;
+    revealed = true;
+    pokeballSound.removeEventListener("ended", revealOnce);
     pokeball.classList.remove("spinning");
     const prize = pickWeightedPrize(PRIZES);
     showRevealScreen(prize);
-  }, SPIN_DURATION_MS);
+  };
+
+  // The reveal is timed to the sound finishing, so the prize appears right as the
+  // Pokéball "pops" open. If the sound can't play, the fallback timer below covers it.
+  pokeballSound.currentTime = 0;
+  pokeballSound.addEventListener("ended", revealOnce, { once: true });
+  pokeballSound.play().catch(() => {});
+
+  window.setTimeout(revealOnce, SPIN_FALLBACK_MS);
 }
 
 prizeButton.addEventListener("click", runPrizeSequence);
