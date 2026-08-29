@@ -46,7 +46,11 @@ Three plain files, no framework, no bundler:
   loop via CSS animation). Two screens (`#idle-screen`, `#reveal-screen`)
   are toggled via a `.hidden` class rather than routing. The reveal screen
   auto-returns to idle after `REVEAL_AUTO_RESET_MS` (10s) if nobody taps
-  "Tap for Next Prize" — same `showIdleScreen()` path either way.
+  "Tap for Next Prize" — same `showIdleScreen()` path either way. Tapping the
+  Pokéball plays `sounds/pokeball-open.wav`, and the reveal is timed to that
+  sound's `ended` event (not a fixed delay) so the prize appears right as the
+  sound finishes; `SPIN_FALLBACK_MS` (6s) is a safety net in case the sound
+  can't play, so the kiosk never gets stuck spinning.
 - `css/style.css` — all visuals: white background theme, the `.content-panel`
   frosted-glass card that holds the title/button/reveal content above the
   scrolling background, the Pokéball button/spin animation, confetti
@@ -71,3 +75,12 @@ Images must be the user's own photos of physical cards/candy — do not fetch
 or embed official Pokémon TCG card scans or candy brand photography from the
 web; that's Pokémon Company/brand-owned artwork, not something to source or
 reproduce here.
+
+## Sound
+
+`sounds/pokeball-open.wav` plays when the Pokéball is tapped. Keep new sound
+effects in `.wav` — a prior `.m4a` recording was served with an incorrect
+Content-Type (`audio/mp4a-latm`) by Python's `http.server`, which Chrome
+silently refuses to decode (the `<audio>` element just stalls at
+`readyState 0` forever, no error event). `.wav` sidesteps this since its MIME
+type (`audio/x-wav` / `audio/wav`) is unambiguous on every server.
