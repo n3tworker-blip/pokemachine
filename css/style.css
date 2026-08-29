@@ -1,0 +1,282 @@
+:root {
+  --bg-white: #ffffff;
+  --ink: #2b2b2b;
+  --orange: #ff7518;
+  --gold: #ffcb05;
+  --red: #ee1515;
+  --blue: #2a75bb;
+
+  --cat-candy: #ff5da2;
+  --cat-cards: #3b6cff;
+  --cat-custom: var(--gold);
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg-white);
+  font-family: "Segoe UI", "Trebuchet MS", Verdana, sans-serif;
+  color: var(--ink);
+  touch-action: manipulation;
+}
+
+#app {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+}
+
+.screen {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+  transition: opacity 0.35s ease;
+}
+
+.screen.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.content-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  border-radius: 40px;
+  padding: 3rem 3.5rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+}
+
+.title {
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  margin: 0;
+  color: var(--gold);
+  -webkit-text-stroke: 2px var(--blue);
+  text-shadow: 0 4px 0 var(--red);
+  letter-spacing: 2px;
+}
+
+.subtitle {
+  margin: 0;
+  font-size: clamp(1.1rem, 2.5vw, 1.8rem);
+  color: var(--ink);
+  opacity: 0.75;
+}
+
+/* --- Pokéball button --- */
+
+.pokeball-button {
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  width: clamp(180px, 28vw, 320px);
+  height: clamp(180px, 28vw, 320px);
+  border-radius: 50%;
+  transition: transform 0.15s ease;
+}
+
+.pokeball-button:active {
+  transform: scale(0.94);
+}
+
+.pokeball-button:disabled {
+  cursor: default;
+}
+
+.pokeball {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background:
+    linear-gradient(#ffffff 0%, #ffffff 45%, #222 45%, #222 55%, var(--red) 55%, var(--red) 100%);
+  box-shadow:
+    0 0 0 4px rgba(0, 0, 0, 0.08),
+    0 10px 30px rgba(0, 0, 0, 0.2),
+    inset 0 -6px 12px rgba(0, 0, 0, 0.35),
+    inset 0 6px 10px rgba(255, 255, 255, 0.5);
+  position: relative;
+}
+
+.pokeball::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 26%;
+  height: 26%;
+  transform: translate(-50%, -50%);
+  background: #ffffff;
+  border: 6px solid #222;
+  border-radius: 50%;
+}
+
+.pokeball.spinning {
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* --- Reveal screen --- */
+
+.reveal-card {
+  animation: pop-in 0.4s ease;
+}
+
+@keyframes pop-in {
+  from { transform: scale(0.7); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.reveal-image-wrap {
+  width: clamp(220px, 34vw, 420px);
+  height: clamp(220px, 34vw, 420px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.reveal-image-wrap img {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 18px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.reveal-placeholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(4rem, 10vw, 8rem);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.reveal-placeholder.candy { background: color-mix(in srgb, var(--cat-candy) 45%, white); }
+.reveal-placeholder.cards { background: color-mix(in srgb, var(--cat-cards) 45%, white); }
+.reveal-placeholder.custom { background: color-mix(in srgb, var(--cat-custom) 45%, white); }
+
+.reveal-name {
+  font-size: clamp(1.8rem, 4.5vw, 3.2rem);
+  margin: 0;
+  color: var(--ink);
+}
+
+.reset-button {
+  font-size: clamp(1rem, 2vw, 1.4rem);
+  padding: 0.9rem 2rem;
+  border-radius: 999px;
+  border: none;
+  background: var(--gold);
+  color: var(--ink);
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #c99e00;
+}
+
+.reset-button:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #c99e00;
+}
+
+/* --- Scrolling product background --- */
+
+#scroll-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: flex;
+  justify-content: space-evenly;
+  overflow: hidden;
+}
+
+.scroll-lane {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  animation: scroll-down linear infinite;
+  will-change: transform;
+}
+
+@keyframes scroll-down {
+  from { transform: translateY(-50%); }
+  to { transform: translateY(0); }
+}
+
+.scroll-thumb {
+  flex-shrink: 0;
+  width: clamp(70px, 8vw, 110px);
+  height: clamp(70px, 8vw, 110px);
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f2f2f5;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.scroll-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.scroll-thumb.placeholder {
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+}
+
+.scroll-thumb.placeholder.candy { background: color-mix(in srgb, var(--cat-candy) 25%, white); }
+.scroll-thumb.placeholder.cards { background: color-mix(in srgb, var(--cat-cards) 25%, white); }
+.scroll-thumb.placeholder.custom { background: color-mix(in srgb, var(--cat-custom) 25%, white); }
+
+/* --- Confetti --- */
+
+#confetti-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 5;
+}
+
+.confetti-piece {
+  position: absolute;
+  top: -20px;
+  width: 10px;
+  height: 16px;
+  opacity: 0.9;
+  animation: confetti-fall linear forwards;
+}
+
+@keyframes confetti-fall {
+  to {
+    transform: translateY(110vh) rotate(540deg);
+    opacity: 0.2;
+  }
+}
