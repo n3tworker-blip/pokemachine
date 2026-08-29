@@ -2,6 +2,7 @@
 // Prize data/weights live in prizes.js — this file shouldn't need edits for day-to-day tuning.
 
 const SPIN_DURATION_MS = 1400;
+const REVEAL_AUTO_RESET_MS = 10000;
 const CONFETTI_COUNT = 40;
 const CONFETTI_COLORS = ["#ffcb05", "#ee1515", "#3b6cff", "#ff5da2", "#f5f5f5"];
 const SCROLL_LANE_COUNT = 7;
@@ -18,6 +19,8 @@ const revealPlaceholder = document.getElementById("reveal-placeholder");
 const revealName = document.getElementById("reveal-name");
 const confettiLayer = document.getElementById("confetti-layer");
 const scrollBg = document.getElementById("scroll-bg");
+
+let revealAutoResetTimer = null;
 
 function pickWeightedPrize(prizes) {
   const totalWeight = prizes.reduce((sum, p) => sum + p.weight, 0);
@@ -105,6 +108,7 @@ function spawnConfetti() {
 }
 
 function showIdleScreen() {
+  clearTimeout(revealAutoResetTimer);
   revealScreen.classList.add("hidden");
   idleScreen.classList.remove("hidden");
   prizeButton.disabled = false;
@@ -116,6 +120,7 @@ function showRevealScreen(prize) {
   idleScreen.classList.add("hidden");
   revealScreen.classList.remove("hidden");
   spawnConfetti();
+  revealAutoResetTimer = window.setTimeout(showIdleScreen, REVEAL_AUTO_RESET_MS);
 }
 
 function runPrizeSequence() {

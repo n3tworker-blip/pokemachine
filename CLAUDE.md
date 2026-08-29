@@ -44,7 +44,9 @@ Three plain files, no framework, no bundler:
   background wall (`buildScrollBackground`/`createScrollLane`, generates
   several vertical lanes of shuffled, duplicated prize thumbnails that
   loop via CSS animation). Two screens (`#idle-screen`, `#reveal-screen`)
-  are toggled via a `.hidden` class rather than routing.
+  are toggled via a `.hidden` class rather than routing. The reveal screen
+  auto-returns to idle after `REVEAL_AUTO_RESET_MS` (10s) if nobody taps
+  "Tap for Next Prize" — same `showIdleScreen()` path either way.
 - `css/style.css` — all visuals: white background theme, the `.content-panel`
   frosted-glass card that holds the title/button/reveal content above the
   scrolling background, the Pokéball button/spin animation, confetti
