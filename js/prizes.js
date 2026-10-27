@@ -37,4 +37,5 @@ const PRIZES = [
 
   // --- Custom ---
   { id: "custom-prize-pack", name: "Surprise Bag", category: "custom", quantity: 20, image: "images/prizes/custom/SurpriseBag.png", emoji: "🎁" },
+  { id: "custom-card-pack", name: "Custom Card Pack", category: "custom", quantity: 20, image: "images/prizes/custom/CustomCardPack.png", emoji: "🃏" },
 ];
