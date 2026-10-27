@@ -61,7 +61,7 @@ Three plain files, no framework, no bundler:
   reveal screen (`.reveal-placeholder.candy/cards/custom`) and the
   scrolling thumbnails (`.scroll-thumb.placeholder.candy/cards/custom`).
 
-Staff inventory screen: press and hold the idle-screen title for 3s
+Staff inventory screen: press and hold the idle-screen title for 5s
 (`ADMIN_HOLD_MS`) to open `#admin-screen`, which shows total taps, recent tap
 rates (from the `tapTimes` timestamps saved with the inventory), and each
 prize's given/left counts and current win chance (`prizeOdds`). It closes via

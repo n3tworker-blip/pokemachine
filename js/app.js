@@ -11,7 +11,7 @@ const CONFETTI_COLORS = ["#ffcb05", "#ee1515", "#3b6cff", "#ff5da2", "#f5f5f5"];
 const SCROLL_LANE_COUNT = 7;
 const SCROLL_LANE_MIN_DURATION_S = 18;
 const SCROLL_LANE_MAX_DURATION_S = 32;
-const ADMIN_HOLD_MS = 3000;
+const ADMIN_HOLD_MS = 5000;
 const ADMIN_AUTO_CLOSE_MS = 60000;
 
 const idleScreen = document.getElementById("idle-screen");
