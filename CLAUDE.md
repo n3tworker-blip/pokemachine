@@ -6,8 +6,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 PokeMachine is a touchscreen kiosk app for a Halloween trunk-or-treat event
 (October 2026). Kids tap a Pokéball button on a touchscreen monitor and get a
-randomly selected prize (Pokémon card pack, candy, or a custom prize pack),
-with weighted odds so rare prizes stay rare. It runs on-site as a static page
+randomly selected prize (Pokémon card pack, candy, or a custom prize pack).
+Limited prizes have fixed stock quantities and are spread across the
+expected guest count; once a prize runs out it can't be picked. It runs on-site as a static page
 opened full-screen in a browser (e.g. `chrome --kiosk`) — no backend, no
 build step, no installed runtime beyond a browser.
 
@@ -32,15 +33,16 @@ day.
 Three plain files, no framework, no bundler:
 
 - `js/prizes.js` — the prize catalog (`PRIZES` array: id, name, category,
-  weight, image path, emoji fallback), currently 5 items (1 generic candy
-  prize, 3 Pokémon TCG Mega Evolution card packs, 1 surprise bag). **This is
+  quantity (`null` = unlimited), image path, emoji fallback), plus
+  `EXPECTED_GUESTS` and `INVENTORY_SESSION`, currently 6 items (1 generic candy
+  prize, 3 Pokémon TCG card packs, 1 surprise bag, 1 custom card pack). **This is
   the file to edit
-  when tuning odds or adding/removing prizes** — `js/app.js` should not need
+  when changing stock or adding/removing prizes** — `js/app.js` should not need
   changes for day-to-day catalog updates. This same array also drives the
   idle-screen scrolling background (see below), so adding a prize here adds
   it to both places automatically.
-- `js/app.js` — kiosk state machine: weighted random pick
-  (`pickWeightedPrize`), the idle → spin → reveal → reset flow, confetti,
+- `js/app.js` — kiosk state machine: inventory-aware random pick
+  (`pickPrize`/`awardPrize`, given-out counts saved to `localStorage`), the idle → spin → reveal → reset flow, confetti,
   image-load-with-emoji-fallback (`renderPrizeVisual`), and the scrolling
   background wall (`buildScrollBackground`/`createScrollLane`, generates
   several vertical lanes of shuffled, duplicated prize thumbnails that
@@ -59,9 +61,20 @@ Three plain files, no framework, no bundler:
   reveal screen (`.reveal-placeholder.candy/cards/custom`) and the
   scrolling thumbnails (`.scroll-thumb.placeholder.candy/cards/custom`).
 
-Odds model: each prize has a `weight`; win probability = `weight / sum(all
-weights)`. See the comment block at the top of `js/prizes.js` for the exact
-mechanics — that comment is the source of truth for how to add prizes.
+Staff inventory screen: press and hold the idle-screen title for 5s
+(`ADMIN_HOLD_MS`) to open `#admin-screen`, which shows total taps, recent tap
+rates (from the `tapTimes` timestamps saved with the inventory), and each
+prize's given/left counts and current win chance (`prizeOdds`). It closes via
+its button or after `ADMIN_AUTO_CLOSE_MS` (60s) so it isn't left up for kids.
+
+Odds model: on each tap, a limited prize's chance = remaining quantity /
+(`EXPECTED_GUESTS` - taps so far); unlimited prizes (candy) split the rest.
+Sold-out prizes get zero chance, and once taps reach `EXPECTED_GUESTS` only
+unlimited prizes (candy) can be won. Taps and given-out counts persist in
+`localStorage` under a key that includes `INVENTORY_SESSION` — change that
+value to reset counts (e.g. after testing). See the comment block at the top
+of `js/prizes.js` — that comment is the source of truth for how to add
+prizes.
 
 ## Prize images
 

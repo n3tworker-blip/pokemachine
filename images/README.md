@@ -10,11 +10,12 @@ emoji, so the app keeps working while photos are still being gathered.
 
 ## `prizes/cards/`
 - `PerfectOrder.png`
-- `ChaosRising.png`
+- `JourneyTogether.png`
 - `PitchBlack.png`
 
 ## `prizes/custom/`
 - `SurpriseBag.png`
+- `CustomCardPack.png`
 
 Square images around 500x500px on a plain/white background work best —
 that's also what shows up in the scrolling background wall on the idle
