@@ -64,10 +64,14 @@ function prizeOdds(prizes, inventory) {
   const inStock = prizes.filter((p) => p.quantity !== null && remainingQuantity(p, inventory) > 0);
   const unlimited = prizes.filter((p) => p.quantity === null);
 
+  // Past the expected guest count, only unlimited prizes (candy) can be won.
+  if (inventory.spins >= EXPECTED_GUESTS && unlimited.length) {
+    return unlimited.map((p) => ({ prize: p, weight: 1 }));
+  }
+
   const limitedLeft = inStock.reduce((sum, p) => sum + remainingQuantity(p, inventory), 0);
   const guestsLeft = Math.max(EXPECTED_GUESTS - inventory.spins, 1);
-  // Once guests outnumber expectations (or stock outnumbers guests), this goes to 0 and
-  // the remaining limited stock is handed out before more unlimited prizes.
+  // If stock ever outnumbers the guests left, this goes to 0 and only limited prizes are given.
   const unlimitedShare = unlimited.length ? Math.max(guestsLeft - limitedLeft, 0) / unlimited.length : 0;
 
   return [

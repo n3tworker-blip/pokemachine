@@ -15,7 +15,7 @@
 //   where guests still expected = EXPECTED_GUESTS - taps so far. Unlimited prizes split
 //   whatever chance is left over. This spreads the limited stock evenly across the whole
 //   night instead of running out early. A prize with 0 left can never be picked.
-//   If more guests show up than expected, the remaining limited stock is given out first.
+//   Once taps reach EXPECTED_GUESTS, only unlimited prizes (candy) can be won.
 //
 // Given-out counts are saved in the browser (localStorage) so they survive a page reload
 // or browser restart. To start counting from zero (e.g. after testing, before the event),
@@ -31,11 +31,11 @@ const PRIZES = [
   { id: "candy", name: "Candy", category: "candy", quantity: null, image: "images/prizes/candy/Candy.png", emoji: "🍬" },
 
   // --- Pokémon TCG card packs ---
-  { id: "cards-perfect-order", name: "Perfect Order Pack", category: "cards", quantity: 20, image: "images/prizes/cards/PerfectOrder.png", emoji: "✨" },
-  { id: "cards-journey-together", name: "Journey Together Pack", category: "cards", quantity: 20, image: "images/prizes/cards/JourneyTogether.png", emoji: "🤝" },
-  { id: "cards-pitch-black", name: "Pitch Black Pack", category: "cards", quantity: 20, image: "images/prizes/cards/PitchBlack.png", emoji: "⚫" },
+  { id: "cards-perfect-order", name: "Perfect Order Pack", category: "cards", quantity: 6, image: "images/prizes/cards/PerfectOrder.png", emoji: "✨" },
+  { id: "cards-journey-together", name: "Journey Together Pack", category: "cards", quantity: 2, image: "images/prizes/cards/JourneyTogether.png", emoji: "🤝" },
+  { id: "cards-pitch-black", name: "Pitch Black Pack", category: "cards", quantity: 32, image: "images/prizes/cards/PitchBlack.png", emoji: "⚫" },
 
   // --- Custom ---
-  { id: "custom-prize-pack", name: "Surprise Bag", category: "custom", quantity: 20, image: "images/prizes/custom/SurpriseBag.png", emoji: "🎁" },
-  { id: "custom-card-pack", name: "Custom Pokémon Card Pack", category: "custom", quantity: 20, image: "images/prizes/custom/CustomCardPack.png", emoji: "🃏" },
+  { id: "custom-prize-pack", name: "Surprise Bag", category: "custom", quantity: 50, image: "images/prizes/custom/SurpriseBag.png", emoji: "🎁" },
+  { id: "custom-card-pack", name: "Custom Pokémon Card Pack", category: "custom", quantity: 50, image: "images/prizes/custom/CustomCardPack.png", emoji: "🃏" },
 ];

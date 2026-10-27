@@ -69,7 +69,8 @@ its button or after `ADMIN_AUTO_CLOSE_MS` (60s) so it isn't left up for kids.
 
 Odds model: on each tap, a limited prize's chance = remaining quantity /
 (`EXPECTED_GUESTS` - taps so far); unlimited prizes (candy) split the rest.
-Sold-out prizes get zero chance. Taps and given-out counts persist in
+Sold-out prizes get zero chance, and once taps reach `EXPECTED_GUESTS` only
+unlimited prizes (candy) can be won. Taps and given-out counts persist in
 `localStorage` under a key that includes `INVENTORY_SESSION` — change that
 value to reset counts (e.g. after testing). See the comment block at the top
 of `js/prizes.js` — that comment is the source of truth for how to add
