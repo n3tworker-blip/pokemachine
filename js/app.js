@@ -1,5 +1,5 @@
-// PokeMachine kiosk logic: weighted prize selection + reveal animation.
-// Prize data/weights live in prizes.js — this file shouldn't need edits for day-to-day tuning.
+// PokeMachine kiosk logic: inventory-aware prize selection + reveal animation.
+// Prize data/quantities live in prizes.js — this file shouldn't need edits for day-to-day tuning.
 
 const POKEBALL_SOUND_SRC = "sounds/pokeball-open.wav";
 // Safety net only: if the sound can't play (missing file, browser blocks it), reveal anyway
@@ -28,14 +28,62 @@ pokeballSound.preload = "auto";
 
 let revealAutoResetTimer = null;
 
-function pickWeightedPrize(prizes) {
-  const totalWeight = prizes.reduce((sum, p) => sum + p.weight, 0);
+const INVENTORY_STORAGE_KEY = `pokemachine-inventory:${INVENTORY_SESSION}`;
+
+// { spins: total taps so far, given: { [prizeId]: count handed out } }
+function loadInventory() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(INVENTORY_STORAGE_KEY));
+    if (saved && typeof saved.spins === "number" && saved.given) return saved;
+  } catch (e) {}
+  return { spins: 0, given: {} };
+}
+
+function saveInventory(inventory) {
+  try {
+    localStorage.setItem(INVENTORY_STORAGE_KEY, JSON.stringify(inventory));
+  } catch (e) {}
+}
+
+function remainingQuantity(prize, inventory) {
+  return Math.max(prize.quantity - (inventory.given[prize.id] || 0), 0);
+}
+
+// Odds model is documented at the top of prizes.js.
+function pickPrize(prizes, inventory) {
+  const inStock = prizes.filter((p) => p.quantity !== null && remainingQuantity(p, inventory) > 0);
+  const unlimited = prizes.filter((p) => p.quantity === null);
+
+  const limitedLeft = inStock.reduce((sum, p) => sum + remainingQuantity(p, inventory), 0);
+  const guestsLeft = Math.max(EXPECTED_GUESTS - inventory.spins, 1);
+  // Once guests outnumber expectations (or stock outnumbers guests), this goes to 0 and
+  // the remaining limited stock is handed out before more unlimited prizes.
+  const unlimitedShare = unlimited.length ? Math.max(guestsLeft - limitedLeft, 0) / unlimited.length : 0;
+
+  const entries = [
+    ...inStock.map((p) => ({ prize: p, weight: remainingQuantity(p, inventory) })),
+    ...unlimited.map((p) => ({ prize: p, weight: unlimitedShare })),
+  ].filter((e) => e.weight > 0);
+
+  // Only reachable if every prize is limited and all are gone.
+  if (!entries.length) return unlimited[0] || prizes[0];
+
+  const totalWeight = entries.reduce((sum, e) => sum + e.weight, 0);
   let roll = Math.random() * totalWeight;
-  for (const prize of prizes) {
-    roll -= prize.weight;
-    if (roll <= 0) return prize;
+  for (const entry of entries) {
+    roll -= entry.weight;
+    if (roll <= 0) return entry.prize;
   }
-  return prizes[prizes.length - 1];
+  return entries[entries.length - 1].prize;
+}
+
+function awardPrize() {
+  const inventory = loadInventory();
+  const prize = pickPrize(PRIZES, inventory);
+  inventory.spins += 1;
+  inventory.given[prize.id] = (inventory.given[prize.id] || 0) + 1;
+  saveInventory(inventory);
+  return prize;
 }
 
 function renderPrizeVisual(prize) {
@@ -139,7 +187,7 @@ function runPrizeSequence() {
     revealed = true;
     pokeballSound.removeEventListener("ended", revealOnce);
     pokeball.classList.remove("spinning");
-    const prize = pickWeightedPrize(PRIZES);
+    const prize = awardPrize();
     showRevealScreen(prize);
   };
 
