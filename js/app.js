@@ -11,6 +11,8 @@ const CONFETTI_COLORS = ["#ffcb05", "#ee1515", "#3b6cff", "#ff5da2", "#f5f5f5"];
 const SCROLL_LANE_COUNT = 7;
 const SCROLL_LANE_MIN_DURATION_S = 18;
 const SCROLL_LANE_MAX_DURATION_S = 32;
+const ADMIN_HOLD_MS = 3000;
+const ADMIN_AUTO_CLOSE_MS = 60000;
 
 const idleScreen = document.getElementById("idle-screen");
 const revealScreen = document.getElementById("reveal-screen");
@@ -22,6 +24,11 @@ const revealPlaceholder = document.getElementById("reveal-placeholder");
 const revealName = document.getElementById("reveal-name");
 const confettiLayer = document.getElementById("confetti-layer");
 const scrollBg = document.getElementById("scroll-bg");
+const title = document.getElementById("title");
+const adminScreen = document.getElementById("admin-screen");
+const adminStats = document.getElementById("admin-stats");
+const adminRows = document.getElementById("admin-rows");
+const adminClose = document.getElementById("admin-close");
 
 const pokeballSound = new Audio(POKEBALL_SOUND_SRC);
 pokeballSound.preload = "auto";
@@ -30,13 +37,15 @@ let revealAutoResetTimer = null;
 
 const INVENTORY_STORAGE_KEY = `pokemachine-inventory:${INVENTORY_SESSION}`;
 
-// { spins: total taps so far, given: { [prizeId]: count handed out } }
+// { spins: total taps so far, given: { [prizeId]: count handed out }, tapTimes: [ms timestamps] }
 function loadInventory() {
   try {
     const saved = JSON.parse(localStorage.getItem(INVENTORY_STORAGE_KEY));
-    if (saved && typeof saved.spins === "number" && saved.given) return saved;
+    if (saved && typeof saved.spins === "number" && saved.given) {
+      return { tapTimes: [], ...saved };
+    }
   } catch (e) {}
-  return { spins: 0, given: {} };
+  return { spins: 0, given: {}, tapTimes: [] };
 }
 
 function saveInventory(inventory) {
@@ -49,8 +58,9 @@ function remainingQuantity(prize, inventory) {
   return Math.max(prize.quantity - (inventory.given[prize.id] || 0), 0);
 }
 
-// Odds model is documented at the top of prizes.js.
-function pickPrize(prizes, inventory) {
+// Odds model is documented at the top of prizes.js. Returns the prizes that can currently
+// be won, each with its relative weight.
+function prizeOdds(prizes, inventory) {
   const inStock = prizes.filter((p) => p.quantity !== null && remainingQuantity(p, inventory) > 0);
   const unlimited = prizes.filter((p) => p.quantity === null);
 
@@ -60,10 +70,15 @@ function pickPrize(prizes, inventory) {
   // the remaining limited stock is handed out before more unlimited prizes.
   const unlimitedShare = unlimited.length ? Math.max(guestsLeft - limitedLeft, 0) / unlimited.length : 0;
 
-  const entries = [
+  return [
     ...inStock.map((p) => ({ prize: p, weight: remainingQuantity(p, inventory) })),
     ...unlimited.map((p) => ({ prize: p, weight: unlimitedShare })),
   ].filter((e) => e.weight > 0);
+}
+
+function pickPrize(prizes, inventory) {
+  const entries = prizeOdds(prizes, inventory);
+  const unlimited = prizes.filter((p) => p.quantity === null);
 
   // Only reachable if every prize is limited and all are gone.
   if (!entries.length) return unlimited[0] || prizes[0];
@@ -82,8 +97,85 @@ function awardPrize() {
   const prize = pickPrize(PRIZES, inventory);
   inventory.spins += 1;
   inventory.given[prize.id] = (inventory.given[prize.id] || 0) + 1;
+  inventory.tapTimes.push(Date.now());
   saveInventory(inventory);
   return prize;
+}
+
+// --- Staff inventory screen ---
+
+let adminHoldTimer = null;
+let adminAutoCloseTimer = null;
+
+function formatTime(ms) {
+  return ms ? new Date(ms).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) : "—";
+}
+
+function renderAdminScreen() {
+  const inventory = loadInventory();
+  const now = Date.now();
+  const tapsWithin = (minutes) => inventory.tapTimes.filter((t) => now - t <= minutes * 60000).length;
+  const firstTap = inventory.tapTimes[0];
+  const lastTap = inventory.tapTimes[inventory.tapTimes.length - 1];
+  const hoursRunning = firstTap ? Math.max((now - firstTap) / 3600000, 1 / 60) : 0;
+
+  const stats = [
+    ["Total taps", inventory.spins],
+    ["Expected guests left", Math.max(EXPECTED_GUESTS - inventory.spins, 0)],
+    ["Taps, last 15 min", tapsWithin(15)],
+    ["Taps, last hour", tapsWithin(60)],
+    ["Avg taps / hour", hoursRunning ? Math.round(inventory.tapTimes.length / hoursRunning) : 0],
+    ["First tap", formatTime(firstTap)],
+    ["Last tap", formatTime(lastTap)],
+  ];
+  adminStats.replaceChildren(
+    ...stats.flatMap(([label, value]) => {
+      const dt = document.createElement("dt");
+      dt.textContent = label;
+      const dd = document.createElement("dd");
+      dd.textContent = value;
+      return [dt, dd];
+    })
+  );
+
+  const odds = prizeOdds(PRIZES, inventory);
+  const totalWeight = odds.reduce((sum, e) => sum + e.weight, 0);
+  adminRows.replaceChildren(
+    ...PRIZES.map((prize) => {
+      const entry = odds.find((e) => e.prize === prize);
+      const chance = entry && totalWeight ? `${((entry.weight / totalWeight) * 100).toFixed(1)}%` : "0%";
+      const left = prize.quantity === null ? "∞" : `${remainingQuantity(prize, inventory)} / ${prize.quantity}`;
+      const row = document.createElement("tr");
+      if (prize.quantity !== null && remainingQuantity(prize, inventory) === 0) row.className = "sold-out";
+      for (const text of [`${prize.emoji} ${prize.name}`, inventory.given[prize.id] || 0, left, chance]) {
+        const cell = document.createElement("td");
+        cell.textContent = text;
+        row.appendChild(cell);
+      }
+      return row;
+    })
+  );
+}
+
+function openAdminScreen() {
+  renderAdminScreen();
+  adminScreen.classList.remove("hidden");
+  clearTimeout(adminAutoCloseTimer);
+  adminAutoCloseTimer = window.setTimeout(closeAdminScreen, ADMIN_AUTO_CLOSE_MS);
+}
+
+function closeAdminScreen() {
+  clearTimeout(adminAutoCloseTimer);
+  adminScreen.classList.add("hidden");
+}
+
+function startAdminHold() {
+  clearTimeout(adminHoldTimer);
+  adminHoldTimer = window.setTimeout(openAdminScreen, ADMIN_HOLD_MS);
+}
+
+function cancelAdminHold() {
+  clearTimeout(adminHoldTimer);
 }
 
 function renderPrizeVisual(prize) {
@@ -202,5 +294,13 @@ function runPrizeSequence() {
 
 prizeButton.addEventListener("click", runPrizeSequence);
 resetButton.addEventListener("click", showIdleScreen);
+
+title.addEventListener("pointerdown", startAdminHold);
+for (const evt of ["pointerup", "pointerleave", "pointercancel"]) {
+  title.addEventListener(evt, cancelAdminHold);
+}
+// Stop a long press from opening the browser's context menu instead.
+title.addEventListener("contextmenu", (e) => e.preventDefault());
+adminClose.addEventListener("click", closeAdminScreen);
 
 buildScrollBackground();

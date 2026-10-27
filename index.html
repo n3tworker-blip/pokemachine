@@ -13,7 +13,7 @@
 
     <header id="idle-screen" class="screen">
       <div class="content-panel">
-        <h1 class="title">PokéMachine</h1>
+        <h1 class="title" id="title">PokéMachine</h1>
         <p class="subtitle">Sunset Heights Trunk or Treat</p>
         <button id="prize-button" class="pokeball-button" aria-label="Tap to win a prize">
           <span class="pokeball" id="pokeball"></span>
@@ -29,6 +29,21 @@
         </div>
         <h2 id="reveal-name" class="reveal-name"></h2>
         <button id="reset-button" class="reset-button">Tap for Next Prize</button>
+      </div>
+    </section>
+
+    <!-- Staff-only: press and hold the title for a few seconds to open. -->
+    <section id="admin-screen" class="screen hidden">
+      <div class="content-panel admin-panel">
+        <h2 class="admin-heading">Inventory &amp; Stats</h2>
+        <dl id="admin-stats" class="admin-stats"></dl>
+        <table class="admin-table">
+          <thead>
+            <tr><th>Prize</th><th>Given</th><th>Left</th><th>Chance now</th></tr>
+          </thead>
+          <tbody id="admin-rows"></tbody>
+        </table>
+        <button id="admin-close" class="reset-button">Close</button>
       </div>
     </section>
   </div>

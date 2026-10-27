@@ -61,6 +61,12 @@ Three plain files, no framework, no bundler:
   reveal screen (`.reveal-placeholder.candy/cards/custom`) and the
   scrolling thumbnails (`.scroll-thumb.placeholder.candy/cards/custom`).
 
+Staff inventory screen: press and hold the idle-screen title for 3s
+(`ADMIN_HOLD_MS`) to open `#admin-screen`, which shows total taps, recent tap
+rates (from the `tapTimes` timestamps saved with the inventory), and each
+prize's given/left counts and current win chance (`prizeOdds`). It closes via
+its button or after `ADMIN_AUTO_CLOSE_MS` (60s) so it isn't left up for kids.
+
 Odds model: on each tap, a limited prize's chance = remaining quantity /
 (`EXPECTED_GUESTS` - taps so far); unlimited prizes (candy) split the rest.
 Sold-out prizes get zero chance. Taps and given-out counts persist in
