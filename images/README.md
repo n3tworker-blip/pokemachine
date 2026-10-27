@@ -10,7 +10,7 @@ emoji, so the app keeps working while photos are still being gathered.
 
 ## `prizes/cards/`
 - `PerfectOrder.png`
-- `ChaosRising.png`
+- `JourneyTogether.png`
 - `PitchBlack.png`
 
 ## `prizes/custom/`

@@ -35,7 +35,7 @@ Three plain files, no framework, no bundler:
 - `js/prizes.js` — the prize catalog (`PRIZES` array: id, name, category,
   quantity (`null` = unlimited), image path, emoji fallback), plus
   `EXPECTED_GUESTS` and `INVENTORY_SESSION`, currently 5 items (1 generic candy
-  prize, 3 Pokémon TCG Mega Evolution card packs, 1 surprise bag). **This is
+  prize, 3 Pokémon TCG card packs, 1 surprise bag). **This is
   the file to edit
   when changing stock or adding/removing prizes** — `js/app.js` should not need
   changes for day-to-day catalog updates. This same array also drives the

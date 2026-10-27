@@ -30,9 +30,9 @@ const PRIZES = [
   // --- Candy --- (one generic prize covering all candy types, rather than naming each one)
   { id: "candy", name: "Candy", category: "candy", quantity: null, image: "images/prizes/candy/Candy.png", emoji: "🍬" },
 
-  // --- Pokémon TCG: Mega Evolution series card packs ---
+  // --- Pokémon TCG card packs ---
   { id: "cards-perfect-order", name: "Perfect Order Pack", category: "cards", quantity: 20, image: "images/prizes/cards/PerfectOrder.png", emoji: "✨" },
-  { id: "cards-chaos-rising", name: "Chaos Rising Pack", category: "cards", quantity: 20, image: "images/prizes/cards/ChaosRising.png", emoji: "🌀" },
+  { id: "cards-journey-together", name: "Journey Together Pack", category: "cards", quantity: 20, image: "images/prizes/cards/JourneyTogether.png", emoji: "🤝" },
   { id: "cards-pitch-black", name: "Pitch Black Pack", category: "cards", quantity: 20, image: "images/prizes/cards/PitchBlack.png", emoji: "⚫" },
 
   // --- Custom ---
