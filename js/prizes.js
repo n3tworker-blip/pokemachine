@@ -23,7 +23,7 @@
 //
 // This same list also feeds the scrolling background wall on the idle screen (see js/app.js).
 
-const EXPECTED_GUESTS = 500;
+const EXPECTED_GUESTS = 600;
 const INVENTORY_SESSION = "2026-trunk-or-treat";
 
 const PRIZES = [
