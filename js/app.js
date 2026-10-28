@@ -29,6 +29,10 @@ const adminScreen = document.getElementById("admin-screen");
 const adminStats = document.getElementById("admin-stats");
 const adminRows = document.getElementById("admin-rows");
 const adminClose = document.getElementById("admin-close");
+const adminReset = document.getElementById("admin-reset");
+const adminResetConfirm = document.getElementById("admin-reset-confirm");
+const adminResetCancel = document.getElementById("admin-reset-cancel");
+const adminResetYes = document.getElementById("admin-reset-yes");
 
 const pokeballSound = new Audio(POKEBALL_SOUND_SRC);
 pokeballSound.preload = "auto";
@@ -161,7 +165,21 @@ function renderAdminScreen() {
   );
 }
 
+// Reset is two steps (Reset Counts, then an explicit "Yes") so a stray tap can't wipe counts.
+function showResetConfirm(show) {
+  adminResetConfirm.hidden = !show;
+  adminReset.hidden = show;
+  if (show) adminResetConfirm.scrollIntoView({ block: "nearest" });
+}
+
+function resetInventory() {
+  saveInventory({ spins: 0, given: {}, tapTimes: [] });
+  showResetConfirm(false);
+  renderAdminScreen();
+}
+
 function openAdminScreen() {
+  showResetConfirm(false);
   renderAdminScreen();
   adminScreen.classList.remove("hidden");
   clearTimeout(adminAutoCloseTimer);
@@ -306,5 +324,8 @@ for (const evt of ["pointerup", "pointerleave", "pointercancel"]) {
 // Stop a long press from opening the browser's context menu instead.
 title.addEventListener("contextmenu", (e) => e.preventDefault());
 adminClose.addEventListener("click", closeAdminScreen);
+adminReset.addEventListener("click", () => showResetConfirm(true));
+adminResetCancel.addEventListener("click", () => showResetConfirm(false));
+adminResetYes.addEventListener("click", resetInventory);
 
 buildScrollBackground();

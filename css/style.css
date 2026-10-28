@@ -265,6 +265,45 @@ html, body {
   color: var(--red);
 }
 
+.admin-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.admin-actions [hidden],
+.admin-reset-confirm[hidden] {
+  display: none;
+}
+
+.reset-button.danger {
+  background: var(--red);
+  color: #ffffff;
+  box-shadow: 0 4px 0 #a80e0e;
+}
+
+.reset-button.danger:active {
+  box-shadow: 0 2px 0 #a80e0e;
+}
+
+.admin-reset-confirm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border: 2px solid var(--red);
+  border-radius: 20px;
+  max-width: 36rem;
+}
+
+.admin-reset-confirm p {
+  margin: 0;
+  font-weight: bold;
+  color: var(--red);
+}
+
 /* --- Scrolling product background --- */
 
 #scroll-bg {
