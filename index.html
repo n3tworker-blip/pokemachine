@@ -43,7 +43,17 @@
           </thead>
           <tbody id="admin-rows"></tbody>
         </table>
-        <button id="admin-close" class="reset-button">Close</button>
+        <div class="admin-actions">
+          <button id="admin-close" class="reset-button">Close</button>
+          <button id="admin-reset" class="reset-button danger">Reset Counts</button>
+        </div>
+        <div id="admin-reset-confirm" class="admin-reset-confirm" hidden>
+          <p>Are you sure? This sets every prize count and all tap stats on this device back to zero. It can't be undone.</p>
+          <div class="admin-actions">
+            <button id="admin-reset-cancel" class="reset-button">No, keep counts</button>
+            <button id="admin-reset-yes" class="reset-button danger">Yes, reset to zero</button>
+          </div>
+        </div>
       </div>
     </section>
   </div>

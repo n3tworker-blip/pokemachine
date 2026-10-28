@@ -66,6 +66,9 @@ Staff inventory screen: press and hold the idle-screen title for 5s
 rates (from the `tapTimes` timestamps saved with the inventory), and each
 prize's given/left counts and current win chance (`prizeOdds`). It closes via
 its button or after `ADMIN_AUTO_CLOSE_MS` (60s) so it isn't left up for kids.
+It also has a "Reset Counts" button that zeroes this device's saved counts and
+tap stats; it only acts after a second, explicit "Yes, reset to zero" tap so a
+stray touch can't wipe the inventory.
 
 Odds model: on each tap, a limited prize's chance = remaining quantity /
 (`EXPECTED_GUESTS` - taps so far); unlimited prizes (candy) split the rest.

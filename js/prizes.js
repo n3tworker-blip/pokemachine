@@ -33,9 +33,9 @@ const PRIZES = [
   // --- Pokémon TCG card packs ---
   { id: "cards-perfect-order", name: "Perfect Order Pack", category: "cards", quantity: 6, image: "images/prizes/cards/PerfectOrder.png", emoji: "✨" },
   { id: "cards-journey-together", name: "Journey Together Pack", category: "cards", quantity: 2, image: "images/prizes/cards/JourneyTogether.png", emoji: "🤝" },
-  { id: "cards-pitch-black", name: "Pitch Black Pack", category: "cards", quantity: 32, image: "images/prizes/cards/PitchBlack.png", emoji: "⚫" },
+  { id: "cards-pitch-black", name: "Pitch Black Pack", category: "cards", quantity: 36, image: "images/prizes/cards/PitchBlack.png", emoji: "⚫" },
 
   // --- Custom ---
-  { id: "custom-prize-pack", name: "Surprise Bag", category: "custom", quantity: 50, image: "images/prizes/custom/SurpriseBag.png", emoji: "🎁" },
-  { id: "custom-card-pack", name: "Custom Pokémon Card Pack", category: "custom", quantity: 50, image: "images/prizes/custom/CustomCardPack.png", emoji: "🃏" },
+  { id: "custom-prize-pack", name: "Surprise Bag", category: "custom", quantity: 60, image: "images/prizes/custom/SurpriseBag.png", emoji: "🎁" },
+  { id: "custom-card-pack", name: "Custom Pokémon Card Pack", category: "custom", quantity: 60, image: "images/prizes/custom/CustomCardPack.png", emoji: "🃏" },
 ];
